@@ -1,4 +1,4 @@
-#-*- coding : utf-8-*-
+﻿#coding=utf-8
 from pandas import read_csv
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QInputDialog, QWidget
@@ -42,9 +42,9 @@ class myWindow(main_window.Ui_MainWindow):
 
 def load_cats_data(path):
     cats = []
-    data = read_csv(path + "cat_data.csv", sep=",", engine="python")
+    data = read_csv(path + "cat_data.csv", sep=",", engine="python", encoding="utf-8")
     for i in range(1, data.shape[0] + 1):
-        cats.append(Cat(data["Name"][i], data["Friendly_const"][i], data["Consumption"][i]))
+        cats.append(Cat(data[u"Name"][i], data[u"Friendly_const"][i], data[u"Consumption"][i]))
     return cats
 
 
