@@ -1,5 +1,5 @@
 Name,Is_alive,Friendly_const,Consumption
-1,大威,TRUE,7,10
-2,小黄鸭,TRUE,8,10
-3,一帆,TRUE,6,10
-4,云雾,TRUE,3,10
+大威,True,7,10
+小黄鸭,True,8,10
+一帆,True,6,10
+云雾,True,3,10

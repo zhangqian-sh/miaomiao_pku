@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="save_Record">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>530</y>
+      <x>20</x>
+      <y>490</y>
       <width>100</width>
       <height>30</height>
      </rect>
@@ -43,8 +43,8 @@
    <widget class="QPushButton" name="next_Day">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>490</y>
+      <x>20</x>
+      <y>450</y>
       <width>100</width>
       <height>30</height>
      </rect>
@@ -56,8 +56,8 @@
    <widget class="QPushButton" name="set_Food">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>450</y>
+      <x>20</x>
+      <y>410</y>
       <width>100</width>
       <height>30</height>
      </rect>
@@ -92,29 +92,13 @@
      <string>昨天实际喂了的猫粮量 0</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>120</y>
-      <width>200</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>昨天出现的猫咪</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
    <widget class="QLabel" name="appeared_Cat_List">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>180</y>
-      <width>500</width>
-      <height>200</height>
+      <x>219</x>
+      <y>29</y>
+      <width>541</width>
+      <height>511</height>
      </rect>
     </property>
     <property name="text">
@@ -135,6 +119,19 @@
     </property>
     <property name="text">
      <string>协会还剩的猫粮量 10000</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="load_Record">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>530</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>读取游戏进度</string>
     </property>
    </widget>
   </widget>
