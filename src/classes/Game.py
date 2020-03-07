@@ -1,6 +1,5 @@
 from random import random
-
-import pandas as pd
+from functions import DataBaseIO
 
 
 class Game():
@@ -10,36 +9,30 @@ class Game():
         self.m_daily_consumption = daily_consumption
         self.m_campus = campus
         self.m_cats = cats
-
         # Saving Information
-        self.m_save_path = "savings/"
-        self.m_game_saving = pd.read_csv(self.m_save_path + "game_saving.csv", sep=",", engine="python",
-                                         encoding="utf-8")
-        self.m_cats_saving = pd.read_csv(self.m_save_path + "cat_data.csv", sep=",", engine="python", encoding="utf-8")
+        self.m_save_path = "savings/savings.db"
 
     def load_Saving(self, campus, cats):
-        self.m_game_saving = pd.read_csv(self.m_save_path + "game_saving.csv", sep=",", engine="python",
-                                         encoding="utf-8")
-        self.m_time = self.m_game_saving[u"time"][0]
-        self.m_daily_consumption_expect = self.m_game_saving[u"daily_consumption_expect"][0]
-        self.m_daily_consumption = self.m_game_saving[u"daily_consumption"][0]
+        self.m_time = DataBaseIO.read_Database(self.m_save_path, "GAME", 1, "TIME")
+        self.m_daily_consumption_expect = DataBaseIO.read_Database(self.m_save_path, "GAME", 1,
+                                                                   "DAILY_CONSUMPTION_EXPECT")
+        self.m_daily_consumption = DataBaseIO.read_Database(self.m_save_path, "GAME", 1, "DAILY_CONSUMPTION")
         self.m_campus = campus
         self.m_cats = cats
 
     def save_Saving(self):
-        # Save game info
-        self.m_game_saving.at[0, u"time"] = self.m_time
-        self.m_game_saving.at[0, u"daily_consumption_expect"] = self.m_daily_consumption_expect
-        self.m_game_saving.at[0, u"daily_consumption"] = self.m_daily_consumption
-        self.m_game_saving.to_csv(self.m_save_path + "game_saving.csv", index=False)
-        # Save campus info
+        DataBaseIO.update_Database(self.m_save_path, "GAME", 1, "TIME", self.m_time)
+        DataBaseIO.update_Database(self.m_save_path, "GAME", 1, "DAILY_CONSUMPTION_EXPECT",
+                                   self.m_daily_consumption_expect)
+        DataBaseIO.update_Database(self.m_save_path, "GAME", 1, "DAILY_CONSUMPTION", self.m_daily_consumption)
         self.m_campus.save_Saving()
-        # Save cats info
         for i in range(len(self.m_cats)):
-            self.m_cats_saving.at[i, u"Friendly_const"] = self.m_cats[i].m_friendly_const
-            self.m_cats_saving.at[i, u"Consumption"] = self.m_cats[i].m_consumption
-            self.m_cats_saving.at[i, u"Is_alive"] = self.m_cats[i].m_is_alive
-        self.m_cats_saving.to_csv(self.m_save_path + "cat_data.csv", index=False)
+            DataBaseIO.update_Database(self.m_save_path, "CAT", i + 1, "IS_ALIVE", self.m_cats[i].m_is_alive)
+            DataBaseIO.update_Database(self.m_save_path, "CAT", i + 1, "FRIENDLY_CONST",
+                                       self.m_cats[i].m_friendly_const)
+            DataBaseIO.update_Database(self.m_save_path, "CAT", i + 1, "CONSUMPTION", self.m_cats[i].m_consumption)
+            DataBaseIO.update_Database(self.m_save_path, "CAT", i + 1, "APPEARED_YESTERDAY",
+                                       self.m_cats[i].m_appeared_yesterday)
 
     def food_Decrease(self):
         self.m_daily_consumption = self.m_daily_consumption_expect * (0.95 + 0.15 * random())
@@ -57,16 +50,25 @@ class Game():
         self.m_campus.m_alive_cats_num = alive_num
         self.m_campus.m_alive_list = alive_list
 
-    def get_Appeared_Cats(self):
+    def find_Appeared_Cats(self):
+        cats = self.m_cats
+        L = len(cats)
+        for i in range(L):
+            if cats[i].m_is_alive == True and random() * 10 < cats[i].m_friendly_const * self.m_daily_consumption / 50:
+                cats[i].m_appeared_yesterday = True
+            else:
+                cats[i].m_appeared_yesterday = False
+
+    def get_Appeared_Cats_List(self):
         cats = self.m_cats
         appear_list = []
         L = len(cats)
         for i in range(L):
-            if cats[i].m_is_alive == True and random() * 10 < cats[i].m_friendly_const * self.m_daily_consumption / 50:
+            if cats[i].m_appeared_yesterday:
                 appear_list.append(cats[i].m_name)
         return appear_list
 
     def next_Round(self):
         self.food_Decrease()
+        self.find_Appeared_Cats()
         self.m_time += 1
-
