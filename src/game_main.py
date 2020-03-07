@@ -23,7 +23,7 @@ class myWindow(main_window.Ui_MainWindow):
         game.save_Saving()
 
     def load_Game(self):
-        cats = load_cats_data(path)
+        cats = load_cats_data(path,"savings.db")
         campus.load_Saving(cats)
         game.load_Saving(campus, cats)
         self.update_Main_Window_Information()
@@ -54,9 +54,9 @@ class myWindow(main_window.Ui_MainWindow):
         self.update_Main_Window_Information()
 
 
-def load_cats_data(path):
+def load_cats_data(path,file_name):
     cats=[]
-    file_path=path+"savings.db"
+    file_path=path+file_name
     for i in range(1,DataBaseIO.len_Database(file_path,"CAT")+1):
         t_name=DataBaseIO.read_Database(file_path,"CAT",i,"NAME")
         t_is_alive=DataBaseIO.read_Database(file_path,"CAT",i,"IS_ALIVE")
@@ -70,7 +70,8 @@ if __name__ == "__main__":
     import sys
 
     path = "savings/"
-    cats = load_cats_data(path)
+    file_name="init.db"
+    cats = load_cats_data(path,file_name)
     campus = Campus(cats)
     game = Game(campus, cats)
     app = QApplication(sys.argv)
