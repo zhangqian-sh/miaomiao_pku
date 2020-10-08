@@ -1,5 +1,4 @@
 ﻿# coding=utf-8
-import pandas as pd
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QInputDialog, QWidget
 
@@ -7,6 +6,8 @@ from classes.Campus import Campus
 from classes.Cat import Cat
 from classes.Game import Game
 from ui import main_window
+
+from functions import DataBaseIO
 
 
 class myWindow(main_window.Ui_MainWindow):
@@ -22,7 +23,7 @@ class myWindow(main_window.Ui_MainWindow):
         game.save_Saving()
 
     def load_Game(self):
-        cats = load_cats_data(path)
+        cats = load_cats_data(path,"savings.db")
         campus.load_Saving(cats)
         game.load_Saving(campus, cats)
         self.update_Main_Window_Information()
@@ -35,7 +36,7 @@ class myWindow(main_window.Ui_MainWindow):
 
     def update_Main_Window_Information(self):
         # appear list
-        appear_list = game.get_Appeared_Cats()
+        appear_list = game.get_Appeared_Cats_List()
         self.food_Display_Past.setText("昨天实际喂了的猫粮量 " + ("%.2f" % game.m_daily_consumption))
         self.food_Display_Remain.setText("协会还剩的猫粮量 " + ("%.2f" % game.m_campus.m_food))
         appear_name = "\n"
@@ -53,19 +54,24 @@ class myWindow(main_window.Ui_MainWindow):
         self.update_Main_Window_Information()
 
 
-def load_cats_data(path):
-    cats = []
-    data = pd.read_csv(path + "cat_data.csv", sep=",", engine="python", encoding="utf-8")
-    for i in range(0, data.shape[0]):
-        cats.append(Cat(data[u"Name"][i], data[u"Is_alive"][i], data[u"Friendly_const"][i], data[u"Consumption"][i]))
+def load_cats_data(path,file_name):
+    cats=[]
+    file_path=path+file_name
+    for i in range(1,DataBaseIO.len_Database(file_path,"CAT")+1):
+        t_name=DataBaseIO.read_Database(file_path,"CAT",i,"NAME")
+        t_is_alive=DataBaseIO.read_Database(file_path,"CAT",i,"IS_ALIVE")
+        t_friendly_const=DataBaseIO.read_Database(file_path,"CAT",i,"FRIENDLY_CONST")
+        t_consumption=DataBaseIO.read_Database(file_path,"CAT",i,"CONSUMPTION")
+        t_appeared_yesterday=DataBaseIO.read_Database(file_path,"CAT",i,"APPEARED_YESTERDAY")
+        cats.append(Cat(t_name,t_is_alive,t_friendly_const,t_consumption,appeared_yesterday=t_appeared_yesterday))
     return cats
-
 
 if __name__ == "__main__":
     import sys
 
     path = "savings/"
-    cats = load_cats_data(path)
+    file_name="init.db"
+    cats = load_cats_data(path,file_name)
     campus = Campus(cats)
     game = Game(campus, cats)
     app = QApplication(sys.argv)
